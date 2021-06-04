@@ -58,28 +58,32 @@ class UserController extends Controller
     public function userStats() {
 
         try {
-            $workouts = Workout::select('*')
+            
+            $workouts = Workout::select('id', 'workout_date')
                 ->where('user_id', Auth::id())
                 ->orderBy('id', 'DESC')
                 ->get();
             
             $last_weight_logged = Weight::select('weight', 'date')
                 ->where('user_id', Auth::id())
-                ->latest('created_at')
+                ->latest('date')
                 ->first();
 
-            if(!$workouts->isEmpty()) {
-                return response()->json([
-                    "workout_count" => count($workouts),
-                    "last_workout" => $workouts->pluck('workout_date')->first(),
-                    "last_weight_logged" => $last_weight_logged,
-                ], 200);
+            if($workouts->isEmpty()) {
+                $workouts = "N/A";
+                $last_workout = "N/A";
             }
             else {
-                return response()->json([
-                    "message" => 'No workouts posted.'
-                ], 200);
+                $last_workout = $workouts->pluck('workout_date')->first();
+                $workouts = count($workouts);
             }
+
+            return response()->json([
+                "workout_count" => $workouts,
+                "last_workout" => $last_workout,
+                "last_weight_logged" => $last_weight_logged,
+            ], 200);
+            
         } catch (Exception $e) {
             return response()->json([
                 'message' => '500_message',

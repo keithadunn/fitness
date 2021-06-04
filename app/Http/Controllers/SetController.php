@@ -64,7 +64,8 @@ class SetController extends Controller
             Set::insert($set);
 
             return response()->json([
-                'message' => 'successful',
+                'status' => 200,
+                'message' => 'Successful',
                 'data' => $workout,
             ], 201);  
 
