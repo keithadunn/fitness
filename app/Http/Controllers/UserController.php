@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +41,12 @@ class UserController extends Controller
             }
 
         } catch (Exception $e) {
-
+            return response()->json([
+                'message' => '500_message',
+                'error' => (object)[
+                    $e->getCode() => [$e->getMessage()],
+                ],
+            ]);
         }
     }
 
@@ -57,26 +63,16 @@ class UserController extends Controller
                 ->orderBy('id', 'DESC')
                 ->get();
             
-            $latest_weight_logged = Weight::select('weight', 'date')
+            $last_weight_logged = Weight::select('weight', 'date')
                 ->where('user_id', Auth::id())
                 ->latest('created_at')
                 ->first();
-            $first_weight_logged = Weight::select('weight')
-                ->where('user_id', Auth::id())
-                ->first();
-            
-            $weight = Weight::select('weight', 'date')
-                ->where('user_id', Auth::id())
-                ->orderBy('id', 'DESC')
-                ->get();
-            
 
-            if(sizeof($workouts) > 0) {
+            if(!$workouts->isEmpty()) {
                 return response()->json([
                     "workout_count" => count($workouts),
                     "last_workout" => $workouts->pluck('workout_date')->first(),
-                    "last_weight_logged" => $latest_weight_logged,
-                    "weights" => $weight
+                    "last_weight_logged" => $last_weight_logged,
                 ], 200);
             }
             else {
@@ -96,22 +92,38 @@ class UserController extends Controller
 
     public function userCharts() {
 
-        $selectWeightDates = Weight::select('weight', 'date')
-            ->where('user_id', Auth::id())
-            ->orderBy('date', 'asc')
-            ->get();
+        try {
+            $selectWeightDates = Weight::select('weight', 'date')
+                ->where('user_id', Auth::id())
+                ->orderBy('date', 'asc')
+                ->get();
 
-        $dates = [];
-        $weights = [];
-        foreach($selectWeightDates as $i) {
-            $dates[] = $i->date;
-            $weights[] = $i->weight;
+            $dates = [];
+            $weights = [];
+            
+            foreach($selectWeightDates as $i) {
+                $dates[] = $i->date;
+                $weights[] = $i->weight;
+            }
+            if($selectWeightDates->isEmpty()) {
+                return response()->json([
+                    "message" => 'hi'
+                ], 200);
+            } else {
+                return response()->json([
+                    "dates" => $dates,
+                    "weights" => $weights
+                ], 200);
+            }
+        
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => '500_message',
+                'error' => (object)[
+                    $e->getCode() => [$e->getMessage()],
+                ],
+            ]);
         }
-    
-    
-        return response()->json([
-            "dates" => $dates,
-            "weights" => $weights
-        ]);
+
     }
 }
