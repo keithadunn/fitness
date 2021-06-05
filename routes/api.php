@@ -52,7 +52,7 @@ Route::group([
     Route::post('/store-calories', [CalorieController::class, 'store']);
 
     Route::get('/weight', [WeightController::class, 'index']);
-    Route::post('/store-weight', [WeightController::class, 'store']);
+    Route::post('/weight/create', [WeightController::class, 'store']);
 
     Route::get('/exercises', [ExerciseController::class, 'index']);
 });
