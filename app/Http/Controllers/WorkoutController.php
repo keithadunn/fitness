@@ -72,7 +72,6 @@ class WorkoutController extends Controller
         
             return response()->json([
                 "message" => "Successful",
-                "user" => auth()->user(),
                 "data" => $workout,
             ], 200);
 
@@ -103,7 +102,6 @@ class WorkoutController extends Controller
 
             return response()->json([
                 "message" => "Successful",
-                "user" => auth()->user(),
                 "data" => $workout,
             ], 200);
 
@@ -127,10 +125,10 @@ class WorkoutController extends Controller
     public function destroy($id)
     {
         try {
-            $workout_exists = Workout::select("id", "user_id")
-            ->where('user_id', '=', Auth::id())
-            ->where('id', '=', $id)
-            ->exists();
+            $workout_exists = Workout::select('id', 'user_id')
+                ->where('user_id', '=', Auth::id())
+                ->where('id', '=', $id)
+                ->exists();
 
             $workout = DB::table('workouts')
                 ->where('id', '=', $id)
@@ -139,7 +137,6 @@ class WorkoutController extends Controller
 
             return response()->json([
                 "message" => "Successful",
-                "user" => auth()->user(),
                 "data" => $workout
             ], 200);
 

@@ -20,7 +20,7 @@ class CreateSetsTable extends Migration
             $table->unsignedBigInteger('workout_id');
             $table->foreign('workout_id')->references('id')->on('workouts')->onDelete('cascade');
             $table->tinyInteger('reps');
-            $table->decimal('weight_lifted', 4, 1);
+            $table->unsignedDecimal('weight_lifted', 4, 1);
         });
     }
 

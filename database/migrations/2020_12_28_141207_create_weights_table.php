@@ -17,7 +17,7 @@ class CreateWeightsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->decimal('weight', $precision = 5, $scale = 2);
+            $table->unsignedDecimal('weight', 5, 2);
             $table->date('date');
             $table->timestamps();
         });

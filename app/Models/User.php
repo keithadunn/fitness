@@ -51,10 +51,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Workout::class, 'user_id');
     }
 
-    public function calories() {
-        return $this->hasMany(Calorie::class, 'user_id');
-    }
-
     public function weights() {
         return $this->hasMany(Weight::class, 'user_id');
     }
